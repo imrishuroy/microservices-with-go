@@ -1,0 +1,20 @@
+package cmd
+
+import (
+	"log"
+	"moviesexample.com/rating/internal/controller/rating"
+	httphandler "moviesexample.com/rating/internal/handler/http"
+	"moviesexample.com/rating/internal/repository/memory"
+	"net/http"
+)
+
+func main() {
+	log.Println("Starting the rating service")
+	repo := memory.New()
+	ctrl := rating.New(repo)
+	h := httphandler.New(ctrl)
+	http.Handle("/rating", http.HandlerFunc(h.Handle))
+	if err := http.ListenAndServe(":8082", nil); err != nil {
+		panic(err)
+	}
+}
